@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	userConstructor "github.com/phn00dev/go-crud/internal/domain/user/constructor"
+
 )
 
 func UserRoutes(route *gin.Engine) {
@@ -13,5 +14,17 @@ func UserRoutes(route *gin.Engine) {
 		authUserRoute := userApiRoute.Group("/auth")
 		authUserRoute.POST("/register", userConstructor.UserAuthHandler.Register)
 		authUserRoute.POST("/login", userConstructor.UserAuthHandler.Login)
+	}
+	// use middleware
+	userRoute := userApiRoute.Group("/user-account")
+	{
+		// user profile data
+		userRoute.GET("/", userConstructor.UserHandler.GetUser)
+		userRoute.PUT("/update-data", userConstructor.UserHandler.Update)
+		userRoute.PUT("/update-password", userConstructor.UserHandler.UpdatePassword)
+		userRoute.DELETE("/delete", userConstructor.UserHandler.Delete)
+
+		// user posts
+
 	}
 }
