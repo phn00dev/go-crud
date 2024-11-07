@@ -4,6 +4,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/phn00dev/go-crud/internal/models"
+
 )
 
 type userRepositoryImp struct {
@@ -14,6 +15,14 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return userRepositoryImp{
 		db: db,
 	}
+}
+
+func (userRepo userRepositoryImp) GetById(userId int) (*models.User, error) {
+	var user models.User
+	if err := userRepo.db.Where("id =?", userId).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 func (userRepo userRepositoryImp) GetUser(userId int, username string) (*models.User, error) {
