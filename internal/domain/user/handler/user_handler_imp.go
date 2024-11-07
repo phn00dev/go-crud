@@ -22,26 +22,23 @@ func NewUserHandler(service service.UserService) UserHandler {
 }
 
 func (userHandler userHandlerImp) GetUser(ctx *gin.Context) {
-	userId, exists := ctx.Get("id")
+	userId, exists := ctx.Get("user_id")
 	if !exists {
 		response.Error(ctx, http.StatusBadRequest, "User ID is required", "User ID is required")
 		return
 	}
-	username, exists := ctx.Get("username")
-	if !exists {
-		response.Error(ctx, http.StatusBadRequest, "Username is required", "User ID is required")
-		return
-	}
-	user, err := userHandler.userService.GetUser(userId.(int), username.(string))
+
+	user, err := userHandler.userService.GetUser(userId.(int))
 	if err != nil {
 		response.Error(ctx, http.StatusInternalServerError, "Error fetching user", err.Error())
 		return
 	}
-	response.Success(ctx, http.StatusOK, "User data", user)
+	userResponse := dto.NewUserResponse(user)
+	response.Success(ctx, http.StatusOK, "User data", userResponse)
 }
 
 func (userHandler userHandlerImp) Update(ctx *gin.Context) {
-	userId, exists := ctx.Get("id")
+	userId, exists := ctx.Get("user_id")
 	if !exists {
 		response.Error(ctx, http.StatusBadRequest, "User ID is required", "User ID is required")
 		return
@@ -60,7 +57,7 @@ func (userHandler userHandlerImp) Update(ctx *gin.Context) {
 }
 
 func (userHandler userHandlerImp) UpdatePassword(ctx *gin.Context) {
-	userId, exists := ctx.Get("id")
+	userId, exists := ctx.Get("user_id")
 	if !exists {
 		response.Error(ctx, http.StatusBadRequest, "User ID is required", "User ID is required")
 		return
@@ -75,24 +72,19 @@ func (userHandler userHandlerImp) UpdatePassword(ctx *gin.Context) {
 		response.Error(ctx, http.StatusInternalServerError, "update password error", err.Error())
 		return
 	}
-	response.Success(ctx, http.StatusOK, "update  password successfully", nil)
+	response.Success(ctx, http.StatusOK, "update password successfully", nil)
 }
 
 func (userHandler userHandlerImp) Delete(ctx *gin.Context) {
-	userId, exists := ctx.Get("id")
+	userId, exists := ctx.Get("user_id")
 	if !exists {
 		response.Error(ctx, http.StatusBadRequest, "User ID is required", "User ID is required")
 		return
 	}
-	username, exists := ctx.Get("username")
-	if !exists {
-		response.Error(ctx, http.StatusBadRequest, "Username is required", "User ID is required")
-		return
-	}
 
-	if err := userHandler.userService.Delete(userId.(int), username.(string)); err != nil {
+	if err := userHandler.userService.Delete(userId.(int)); err != nil {
 		response.Error(ctx, http.StatusBadRequest, "delete error", err.Error())
 		return
 	}
-	response.Success(ctx, http.StatusOK, "delete successfully", nil)
+	response.Success(ctx, http.StatusOK, "profile delete successfully", nil)
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/phn00dev/go-crud/internal/domain/user/repository"
 	"github.com/phn00dev/go-crud/internal/models"
 	passwordhash "github.com/phn00dev/go-crud/internal/utils/password_hash"
-
 )
 
 type userServiceImp struct {
@@ -20,12 +19,10 @@ func NewUserService(repo repository.UserRepository) UserService {
 	}
 }
 
-func (userService userServiceImp) GetUser(userId int, username string) (*models.User, error) {
-	if userId == 0 || username != "" {
-		return nil, errors.New("something wrong")
-	}
+func (userService userServiceImp) GetUser(userId int) (*models.User, error) {
+
 	// get user
-	user, err := userService.userRepo.GetUser(userId, username)
+	user, err := userService.userRepo.GetUser(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +33,7 @@ func (userService userServiceImp) Update(userId int, updateRequest dto.UpdateUse
 	if userId == 0 {
 		return errors.New("something wrong")
 	}
-	user, err := userService.userRepo.GetById(userId)
+	user, err := userService.userRepo.GetUser(userId)
 	if err != nil {
 		return err
 	}
@@ -48,25 +45,23 @@ func (userService userServiceImp) UpdatePassword(userId int, request dto.UpdateU
 	if userId == 0 {
 		return errors.New("something wrong")
 	}
-	user, err := userService.userRepo.GetById(userId)
+	user, err := userService.userRepo.GetUser(userId)
 	if err != nil {
 		return err
 	}
 	if err := passwordhash.CheckPasswordHash(request.OldPassword, user.PasswordHash); err != nil {
 		return errors.New("old password wrong")
 	}
+	hashPassword := passwordhash.GeneratePassword(request.Password)
 	// update password
-	return userService.userRepo.UpdatePassword(user.Id, request.Password)
+	return userService.userRepo.UpdatePassword(user.Id, hashPassword)
 }
 
-func (userService userServiceImp) Delete(userId int, username string) error {
-	if userId == 0 || username != "" {
-		return errors.New("something wrong")
-	}
+func (userService userServiceImp) Delete(userId int) error {
 	// get user
-	user, err := userService.userRepo.GetUser(userId, username)
+	user, err := userService.userRepo.GetUser(userId)
 	if err != nil {
 		return err
 	}
-	return userService.userRepo.Delete(user.Id, user.Username)
+	return userService.userRepo.Delete(user.Id)
 }

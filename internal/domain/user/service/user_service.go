@@ -7,8 +7,8 @@ import (
 )
 
 type UserService interface {
-	GetUser(userId int, username string) (*models.User, error)
-	Update(userId int ,updateRequest dto.UpdateUserRequest) error
-	UpdatePassword(userId int ,request dto.UpdateUserPasswordRequest) error
-	Delete(userId int, username string) error
+	GetUser(userId int) (*models.User, error)
+	Update(userId int, updateRequest dto.UpdateUserRequest) error
+	UpdatePassword(userId int, request dto.UpdateUserPasswordRequest) error
+	Delete(userId int) error
 }

@@ -16,7 +16,7 @@ func UserRoutes(route *gin.Engine) {
 		authUserRoute.POST("/login", userConstructor.UserAuthHandler.Login)
 	}
 	// use middleware
-	userRoute := userApiRoute.Group("/user-account")
+	userRoute := userApiRoute.Group("/user")
 	{
 		// user profile data
 		userRoute.Use(middleware.AuthMiddleware())

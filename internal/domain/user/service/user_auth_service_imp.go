@@ -9,6 +9,7 @@ import (
 	"github.com/phn00dev/go-crud/internal/models"
 	passwordhash "github.com/phn00dev/go-crud/internal/utils/password_hash"
 	jwttoken "github.com/phn00dev/go-crud/pkg/jwt_token"
+
 )
 
 type authUserServiceImp struct {
@@ -46,7 +47,7 @@ func (authUserService authUserServiceImp) RegisterUser(registerRequest dto.Regis
 	}
 
 	// Generate JWT token for user
-	accessToken, err := jwttoken.GenerateJwtToken(user.Id, user.Username)
+	accessToken, err := jwttoken.GenerateJwtToken(user.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate JWT token: %v", err)
 	}
@@ -61,7 +62,7 @@ func (authUserService authUserServiceImp) LoginUser(loginRequest dto.LoginReques
 	// Find user by username
 	user, err := authUserService.authUserRepo.GetUserByUsername(loginRequest.Username)
 	if err != nil {
-		return nil, fmt.Errorf("error fetching user: %v", err)
+		return nil, fmt.Errorf("username or password is incorrect")
 	}
 	if user == nil {
 		return nil, errors.New("username or password is incorrect")
@@ -73,7 +74,7 @@ func (authUserService authUserServiceImp) LoginUser(loginRequest dto.LoginReques
 	}
 
 	// Generate JWT token
-	accessToken, err := jwttoken.GenerateJwtToken(user.Id, user.Username)
+	accessToken, err := jwttoken.GenerateJwtToken(user.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate JWT token: %v", err)
 	}
