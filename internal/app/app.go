@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 
+	"github.com/phn00dev/go-crud/internal/setup/routes"
 	"github.com/phn00dev/go-crud/pkg/config"
 )
 
@@ -29,5 +30,7 @@ func NewApp(config *config.Config) (httpServer *gin.Engine) {
 		c.Set("ServerHeader", config.HttpConfig.AppHeader)
 	})
 	httpServer.SetTrustedProxies([]string{"*"})
+	routes.UserRoutes(httpServer)
+	routes.StaticRoutes(httpServer, config)
 	return httpServer
 }
