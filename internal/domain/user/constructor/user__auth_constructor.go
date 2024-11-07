@@ -6,7 +6,6 @@ import (
 	"github.com/phn00dev/go-crud/internal/domain/user/handler"
 	"github.com/phn00dev/go-crud/internal/domain/user/repository"
 	"github.com/phn00dev/go-crud/internal/domain/user/service"
-
 )
 
 var (

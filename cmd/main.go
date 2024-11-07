@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/phn00dev/go-crud/internal/app"
+	"github.com/phn00dev/go-crud/internal/setup/constructor"
 )
 
 func main() {
@@ -13,6 +14,7 @@ func main() {
 		log.Println("dependencies error :", err)
 		return
 	}
+	constructor.InitDependencies(dependencies)
 	appRouter := app.NewApp(dependencies.Config)
 	runServer := fmt.Sprintf("%s:%s", dependencies.Config.HttpConfig.HttpHost, dependencies.Config.HttpConfig.HttpPort)
 	serverURL := fmt.Sprintf("http://%s", runServer)

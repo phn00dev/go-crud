@@ -2,13 +2,13 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/phn00dev/go-crud/internal/domain/user/dto"
 	"github.com/phn00dev/go-crud/internal/domain/user/repository"
 	"github.com/phn00dev/go-crud/internal/models"
 	passwordhash "github.com/phn00dev/go-crud/internal/utils/password_hash"
 	jwttoken "github.com/phn00dev/go-crud/pkg/jwt_token"
-
 )
 
 type authUserServiceImp struct {
@@ -21,51 +21,64 @@ func NewAuthUserService(authUserRepo repository.AuthUserRepository) AuthUserServ
 	}
 }
 
+// RegisterUser handles user registration
 func (authUserService authUserServiceImp) RegisterUser(registerRequest dto.RegisterRequest) (*dto.UserAuthResponse, error) {
-	existingUser, err := authUserService.authUserRepo.GetUserByUsername(registerRequest.Username)
+	// Check if user already exists
+	existingUser, err := authUserService.authUserRepo.FindUserByUsername(registerRequest.Username)
+
 	if err != nil {
 		return nil, err
 	}
 	if existingUser != nil {
-		return nil, errors.New("username already exists")
+		return nil, errors.New("username or email already exists")
 	}
 
+	// Create new user
 	newUser := models.User{
 		Username:     registerRequest.Username,
 		PasswordHash: passwordhash.GeneratePassword(registerRequest.Password),
 	}
-	// create user
+
+	// Save user to the repository
 	user, err := authUserService.authUserRepo.Create(newUser)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create user: %v", err)
 	}
-	// generate token
+
+	// Generate JWT token for user
 	accessToken, err := jwttoken.GenerateJwtToken(user.Id, user.Username)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to generate JWT token: %v", err)
 	}
-	// register response
+
+	// Return successful response
 	registerResponse := dto.NewUserAuthResponse(user, accessToken)
 	return registerResponse, nil
 }
+
+// LoginUser handles user login
 func (authUserService authUserServiceImp) LoginUser(loginRequest dto.LoginRequest) (*dto.UserAuthResponse, error) {
+	// Find user by username
 	user, err := authUserService.authUserRepo.GetUserByUsername(loginRequest.Username)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error fetching user: %v", err)
 	}
 	if user == nil {
-		return nil, errors.New("username or password wrong")
+		return nil, errors.New("username or password is incorrect")
 	}
 
+	// Verify password
 	if err := passwordhash.CheckPasswordHash(loginRequest.Password, user.PasswordHash); err != nil {
-		return nil, errors.New("username or password wrong")
+		return nil, errors.New("username or password is incorrect")
 	}
 
+	// Generate JWT token
 	accessToken, err := jwttoken.GenerateJwtToken(user.Id, user.Username)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to generate JWT token: %v", err)
 	}
 
+	// Return successful response
 	loginResponse := dto.NewUserAuthResponse(user, accessToken)
 	return loginResponse, nil
 }

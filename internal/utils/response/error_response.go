@@ -1,7 +1,8 @@
-package reponse
+package response
 
 import (
 	"github.com/gin-gonic/gin"
+
 )
 
 type errorResponse struct {

@@ -7,9 +7,8 @@ import (
 
 	"github.com/phn00dev/go-crud/internal/domain/user/dto"
 	"github.com/phn00dev/go-crud/internal/domain/user/service"
+	bindandvalidate "github.com/phn00dev/go-crud/internal/utils/bind_and_validate"
 	"github.com/phn00dev/go-crud/internal/utils/response"
-	"github.com/phn00dev/go-crud/internal/utils/validate"
-
 )
 
 type authUserHandlerImp struct {
@@ -23,46 +22,31 @@ func NewAuthUserHandler(authUserService service.AuthUserService) AuthUserHandler
 }
 
 func (authUserHandler authUserHandlerImp) Register(ctx *gin.Context) {
-
 	var registerRequest dto.RegisterRequest
-	// body parser
-	if err := ctx.ShouldBindBodyWithJSON(&registerRequest); err != nil {
-		response.Error(ctx, http.StatusBadRequest, "body parser error", err.Error())
+	// bind and validate
+	if !bindandvalidate.BindAndValidateRequest(ctx, &registerRequest) {
 		return
 	}
-	// validate
-	if err := validate.ValidateStruct(registerRequest); err != nil {
-		response.Error(ctx, http.StatusBadRequest, "validate error", err.Error())
-		return
-	}
-
 	// register user
 	registerResponse, err := authUserHandler.authUserService.RegisterUser(registerRequest)
 	if err != nil {
 		response.Error(ctx, http.StatusInternalServerError, "something wrong", err.Error())
 		return
 	}
-	response.Success(ctx, http.StatusCreated, "user registered successfully", registerResponse)
-
+	response.Success(ctx, http.StatusOK, "user registered successfully", registerResponse)
 }
 
 func (authUserHandler authUserHandlerImp) Login(ctx *gin.Context) {
 	var loginRequest dto.LoginRequest
-	// body parser
-	if err := ctx.ShouldBindBodyWithJSON(&loginRequest); err != nil {
-		response.Error(ctx, http.StatusBadRequest, "body parser error", err.Error())
+	// bind and validate
+	if !bindandvalidate.BindAndValidateRequest(ctx, &loginRequest) {
 		return
 	}
-	// validate
-	if err := validate.ValidateStruct(loginRequest); err != nil {
-		response.Error(ctx, http.StatusBadRequest, "validate error", err.Error())
-		return
-	}
-	//login user
+	// login user
 	loginResponse, err := authUserHandler.authUserService.LoginUser(loginRequest)
 	if err != nil {
 		response.Error(ctx, http.StatusInternalServerError, "something wrong", err.Error())
 		return
 	}
-	response.Success(ctx, http.StatusCreated, "user login successfully", loginResponse)
+	response.Success(ctx, http.StatusOK, "user login successfully", loginResponse)
 }
