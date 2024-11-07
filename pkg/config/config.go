@@ -18,7 +18,7 @@ type dbConfig struct {
 	DbTimeZone string `json:"db_time_zone" env:"DB_TIME_ZONE"`
 }
 type httpConfig struct {
-	HttpHost  string `json:"http_host" env:"HTTP_SERVER"`
+	HttpHost  string `json:"http_host" env:"HTTP_HOST"`
 	HttpPort  string `json:"http_port" env:"HTTP_PORT"`
 	AppName   string `json:"app_name" env:"APP_NAME"`
 	AppHeader string `json:"app_header" env:"APP_HEADER"`
