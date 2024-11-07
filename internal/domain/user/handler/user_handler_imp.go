@@ -9,7 +9,6 @@ import (
 	"github.com/phn00dev/go-crud/internal/domain/user/service"
 	bindandvalidate "github.com/phn00dev/go-crud/internal/utils/bind_and_validate"
 	"github.com/phn00dev/go-crud/internal/utils/response"
-
 )
 
 type userHandlerImp struct {
