@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 
+	postConstructor "github.com/phn00dev/go-crud/internal/domain/post/constructor"
 	userConstructor "github.com/phn00dev/go-crud/internal/domain/user/constructor"
 	"github.com/phn00dev/go-crud/internal/middleware"
 )
@@ -25,6 +26,14 @@ func UserRoutes(route *gin.Engine) {
 		userRoute.PUT("/update-password", userConstructor.UserHandler.UpdatePassword)
 		userRoute.DELETE("/delete", userConstructor.UserHandler.Delete)
 		// user posts
+		userPostRoute := userRoute.Group("/posts")
+		{
+			userPostRoute.GET("/", postConstructor.PostHandler.GetAll)
+			userPostRoute.GET("/:postId", postConstructor.PostHandler.GetOne)
+			userPostRoute.GET("/create", postConstructor.PostHandler.Create)
+			userPostRoute.PUT("/:postId", postConstructor.PostHandler.Update)
+			userPostRoute.DELETE("/:postId", postConstructor.PostHandler.Delete)
+		}
 
 	}
 }
