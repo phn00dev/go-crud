@@ -8,4 +8,6 @@ type PostRepository interface {
 	Create(post models.Post) error
 	Update(postId int, post models.Post) error
 	Delete(userId, postId int) error
+	//
+	SlugExists(slug string) bool
 }

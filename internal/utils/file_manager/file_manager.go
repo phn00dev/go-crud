@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
-
 )
 
 // UploadFile funksýasy HTTP isleginden faýly alýar we serwerde saklap, ýoly yzyna gaýtarýar

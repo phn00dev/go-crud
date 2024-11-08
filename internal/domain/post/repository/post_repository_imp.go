@@ -4,7 +4,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/phn00dev/go-crud/internal/models"
-
 )
 
 type postRepositoryImp struct {
@@ -43,4 +42,12 @@ func (postRepo postRepositoryImp) Update(postId int, post models.Post) error {
 
 func (postRepo postRepositoryImp) Delete(userId, postId int) error {
 	return postRepo.db.Where("id =? AND user_id=?", postId, userId).Delete(&models.Post{}).Error
+}
+
+// postRepositoryImp structynyň içinde ýazylýar
+func (postRepo postRepositoryImp) SlugExists(slug string) bool {
+	var count int64
+	// Slug bilen deň gelýän ýazgylar sanalýar
+	postRepo.db.Model(&models.Post{}).Where("post_slug = ?", slug).Count(&count)
+	return count > 0
 }
