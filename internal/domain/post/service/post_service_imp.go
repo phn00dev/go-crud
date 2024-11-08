@@ -14,7 +14,6 @@ import (
 	filemanager "github.com/phn00dev/go-crud/internal/utils/file_manager"
 	generateuniqueslug "github.com/phn00dev/go-crud/internal/utils/generateUniqueSlug"
 	"github.com/phn00dev/go-crud/pkg/config"
-
 )
 
 type postServiceImp struct {
