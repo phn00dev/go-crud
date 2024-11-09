@@ -1,10 +1,12 @@
 package app
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/phn00dev/go-crud/internal/setup/routes"
 	"github.com/phn00dev/go-crud/pkg/config"
+
 )
 
 func NewApp(config *config.Config) (httpServer *gin.Engine) {
@@ -29,6 +31,7 @@ func NewApp(config *config.Config) (httpServer *gin.Engine) {
 		c.Set("AppName", config.HttpConfig.AppName)
 		c.Set("ServerHeader", config.HttpConfig.AppHeader)
 	})
+	httpServer.Use(cors.Default())
 	httpServer.SetTrustedProxies([]string{"*"})
 	routes.UserRoutes(httpServer)
 	routes.StaticRoutes(httpServer, config)

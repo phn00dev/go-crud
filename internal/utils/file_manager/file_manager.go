@@ -13,7 +13,7 @@ import (
 )
 
 // UploadFile funksýasy HTTP isleginden faýly alýar we serwerde saklap, ýoly yzyna gaýtarýar
-func UploadFile(ctx *gin.Context, fileName, publicFolder string) (string, error) {
+func UploadFile(ctx *gin.Context, fileName, folderName, publicFolder string) (string, error) {
 	file, err := ctx.FormFile(fileName)
 	if err != nil {
 		return "", fmt.Errorf("failed to retrieve the file. Please try again.: %v", err)
@@ -32,13 +32,13 @@ func UploadFile(ctx *gin.Context, fileName, publicFolder string) (string, error)
 
 	newFileName := generateRandomFileName() + filepath.Ext(file.Filename)
 
-	destPath := filepath.Join(publicFolder, newFileName)
+	imageFullPath := publicFolder + "/" + folderName + "/" + newFileName
 
-	if err := ctx.SaveUploadedFile(file, destPath); err != nil {
+	if err := ctx.SaveUploadedFile(file, imageFullPath); err != nil {
 		return "", fmt.Errorf("failed to save the file. Please try again. %v", err)
 	}
 
-	return destPath, nil
+	return imageFullPath, nil
 }
 
 func DeleteFile(filePath string) error {

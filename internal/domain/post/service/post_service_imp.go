@@ -68,7 +68,7 @@ func (postService postServiceImp) CreatePost(ctx *gin.Context, userId int, creat
 	}
 
 	// Upload file
-	postImagePath, err := filemanager.UploadFile(ctx, "post_image", postService.config.FolderConfig.PublicPath)
+	postImagePath, err := filemanager.UploadFile(ctx, "post_image", "post_images", postService.config.FolderConfig.PublicPath)
 	if err != nil {
 		return fmt.Errorf("file upload failed: %v", err)
 	}
@@ -121,7 +121,7 @@ func (postService postServiceImp) UpdatePost(ctx *gin.Context, userId, postId in
 	// If there’s a new file, upload it and delete the old one
 	if file != nil {
 		// Upload new file
-		postImagePath, err := filemanager.UploadFile(ctx, "post_image", postService.config.FolderConfig.PublicPath)
+		postImagePath, err := filemanager.UploadFile(ctx, "post_image", "post_images", postService.config.FolderConfig.PublicPath)
 		if err != nil {
 			return fmt.Errorf("file upload failed: %v", err)
 		}
