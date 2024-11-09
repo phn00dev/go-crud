@@ -4,7 +4,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/phn00dev/go-crud/internal/models"
-
 )
 
 type postRepositoryImp struct {
@@ -19,7 +18,7 @@ func NewPostRepository(db *gorm.DB) PostRepository {
 
 func (postRepo postRepositoryImp) GetAll(userId int) ([]models.Post, error) {
 	var posts []models.Post
-	if err := postRepo.db.Where("user_id=?", userId).Find(&posts).Error; err != nil {
+	if err := postRepo.db.Where("user_id=?", userId).Order("id desc").Find(&posts).Error; err != nil {
 		return nil, err
 	}
 	return posts, nil

@@ -95,10 +95,9 @@ func (postHandler postHandlerImp) Update(ctx *gin.Context) {
 	var updateRequest dto.UpdatePostRequest
 
 	// binding and validate
-	if !bindandvalidate.BindAndValidateRequestofFormData(ctx, updateRequest) {
+	if !bindandvalidate.BindAndValidateRequestofFormData(ctx, &updateRequest) {
 		return
 	}
-
 	// update post
 	if err := postHandler.postService.UpdatePost(ctx, userId.(int), postId, updateRequest); err != nil {
 		response.Error(ctx, http.StatusInternalServerError, "post update error", err.Error())
