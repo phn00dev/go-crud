@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -55,17 +56,25 @@ func (postHandler postHandlerImp) GetOne(ctx *gin.Context) {
 }
 
 func (postHandler postHandlerImp) Create(ctx *gin.Context) {
+
 	userId, exists := ctx.Get("user_id")
 	if !exists {
 		response.Error(ctx, http.StatusBadRequest, "User ID is required", "User ID is required")
 		return
 	}
+	post_title := ctx.PostForm("post_title")
+	post_desc := ctx.PostForm("post_desc")
+	post_image, _ := ctx.FormFile("post_image")
 
+	log.Println("post_title", post_title)
+	log.Println("post_desc", post_desc)
+	log.Println("post_image", post_image.Filename)
 	var createRequest dto.CreatePostRequest
 	// binding and validate
-	if !bindandvalidate.BindAndValidateRequest(ctx, createRequest) {
+	if !bindandvalidate.BindAndValidateRequestofFormData(ctx, &createRequest) {
 		return
 	}
+	log.Println("create_request : ", createRequest)
 	// create post
 	if err := postHandler.postService.CreatePost(ctx, userId.(int), createRequest); err != nil {
 		response.Error(ctx, http.StatusInternalServerError, "create post error", err.Error())
@@ -86,7 +95,7 @@ func (postHandler postHandlerImp) Update(ctx *gin.Context) {
 	var updateRequest dto.UpdatePostRequest
 
 	// binding and validate
-	if !bindandvalidate.BindAndValidateRequest(ctx, updateRequest) {
+	if !bindandvalidate.BindAndValidateRequestofFormData(ctx, updateRequest) {
 		return
 	}
 

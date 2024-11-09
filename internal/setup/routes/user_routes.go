@@ -30,7 +30,7 @@ func UserRoutes(route *gin.Engine) {
 		{
 			userPostRoute.GET("/", postConstructor.PostHandler.GetAll)
 			userPostRoute.GET("/:postId", postConstructor.PostHandler.GetOne)
-			userPostRoute.GET("/create", postConstructor.PostHandler.Create)
+			userPostRoute.POST("/create", postConstructor.PostHandler.Create)
 			userPostRoute.PUT("/:postId", postConstructor.PostHandler.Update)
 			userPostRoute.DELETE("/:postId", postConstructor.PostHandler.Delete)
 		}
