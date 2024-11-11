@@ -8,4 +8,7 @@ type PostHandler interface {
 	Create(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Delete(ctx *gin.Context)
+	// public Post
+	GetAllPost(ctx *gin.Context)
+	GetPostBySlug(ctx *gin.Context)
 }

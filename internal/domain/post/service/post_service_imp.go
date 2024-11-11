@@ -187,3 +187,22 @@ func (postService postServiceImp) DeletePost(userId, postId int) error {
 
 	return nil
 }
+
+func (postService postServiceImp) GetAllPost() ([]models.Post, error) {
+	posts, err := postService.postRepo.GetAllPost()
+	if err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
+func (postService postServiceImp) GetPostBySlug(postSlug string) (*models.Post, error) {
+	if postSlug == "" {
+		return nil, errors.New("post slug wrong")
+	}
+	post, err := postService.postRepo.GetPostBySlug(postSlug)
+	if err != nil {
+		return nil, err
+	}
+	return post, nil
+}

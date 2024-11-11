@@ -10,4 +10,8 @@ type PostRepository interface {
 	Delete(userId, postId int) error
 	//
 	SlugExists(slug string) bool
+
+	// public Post
+	GetAllPost() ([]models.Post, error)
+	GetPostBySlug(postSlug string) (*models.Post, error)
 }

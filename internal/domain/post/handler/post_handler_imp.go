@@ -11,6 +11,7 @@ import (
 	"github.com/phn00dev/go-crud/internal/domain/post/service"
 	bindandvalidate "github.com/phn00dev/go-crud/internal/utils/bind_and_validate"
 	"github.com/phn00dev/go-crud/internal/utils/response"
+
 )
 
 type postHandlerImp struct {
@@ -34,8 +35,9 @@ func (postHandler postHandlerImp) GetAll(ctx *gin.Context) {
 		response.Error(ctx, http.StatusInternalServerError, "something wrong", err.Error())
 		return
 	}
+	postResponses := dto.NewPostResponses(posts)
 	// success
-	response.Success(ctx, http.StatusOK, "user's all posts", posts)
+	response.Success(ctx, http.StatusOK, "user's all posts", postResponses)
 }
 
 func (postHandler postHandlerImp) GetOne(ctx *gin.Context) {
@@ -52,7 +54,8 @@ func (postHandler postHandlerImp) GetOne(ctx *gin.Context) {
 		response.Error(ctx, http.StatusInternalServerError, "something wrong", err.Error())
 		return
 	}
-	response.Success(ctx, http.StatusOK, "post", post)
+	postResponse := dto.NewPostResponse(post)
+	response.Success(ctx, http.StatusOK, "post", postResponse)
 }
 
 func (postHandler postHandlerImp) Create(ctx *gin.Context) {
@@ -62,13 +65,6 @@ func (postHandler postHandlerImp) Create(ctx *gin.Context) {
 		response.Error(ctx, http.StatusBadRequest, "User ID is required", "User ID is required")
 		return
 	}
-	post_title := ctx.PostForm("post_title")
-	post_desc := ctx.PostForm("post_desc")
-	post_image, _ := ctx.FormFile("post_image")
-
-	log.Println("post_title", post_title)
-	log.Println("post_desc", post_desc)
-	log.Println("post_image", post_image.Filename)
 	var createRequest dto.CreatePostRequest
 	// binding and validate
 	if !bindandvalidate.BindAndValidateRequestofFormData(ctx, &createRequest) {
@@ -119,4 +115,25 @@ func (postHandler postHandlerImp) Delete(ctx *gin.Context) {
 		return
 	}
 	response.Success(ctx, http.StatusOK, "post deleted successfully", nil)
+}
+
+func (postHandler postHandlerImp) GetAllPost(ctx *gin.Context) {
+	posts, err := postHandler.postService.GetAllPost()
+	if err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "post find error", err.Error())
+		return
+	}
+	postResponses := dto.NewPostResponses(posts)
+	response.Success(ctx, http.StatusOK, "all posts", postResponses)
+}
+
+func (postHandler postHandlerImp) GetPostBySlug(ctx *gin.Context) {
+	postSlug := ctx.Param("post_slug")
+	post, err := postHandler.postService.GetPostBySlug(postSlug)
+	if err != nil {
+		response.Error(ctx, http.StatusInternalServerError, "post find error", err.Error())
+		return
+	}
+	postResponse := dto.NewPostResponse(post)
+	response.Success(ctx, http.StatusOK, "post", postResponse)
 }

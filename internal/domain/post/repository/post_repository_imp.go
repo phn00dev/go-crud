@@ -18,7 +18,7 @@ func NewPostRepository(db *gorm.DB) PostRepository {
 
 func (postRepo postRepositoryImp) GetAll(userId int) ([]models.Post, error) {
 	var posts []models.Post
-	if err := postRepo.db.Where("user_id=?", userId).Order("id desc").Find(&posts).Error; err != nil {
+	if err := postRepo.db.Where("user_id=?", userId).Order("id desc").Preload("User").Find(&posts).Error; err != nil {
 		return nil, err
 	}
 	return posts, nil
@@ -26,7 +26,7 @@ func (postRepo postRepositoryImp) GetAll(userId int) ([]models.Post, error) {
 
 func (postRepo postRepositoryImp) GetOne(userId, postId int) (*models.Post, error) {
 	var post models.Post
-	if err := postRepo.db.Where("id=? AND user_id=?", postId, userId).First(&post).Error; err != nil {
+	if err := postRepo.db.Where("id=? AND user_id=?", postId, userId).Preload("User").First(&post).Error; err != nil {
 		return nil, err
 	}
 	return &post, nil
@@ -50,4 +50,25 @@ func (postRepo postRepositoryImp) SlugExists(slug string) bool {
 	// Slug bilen deň gelýän ýazgylar sanalýar
 	postRepo.db.Model(&models.Post{}).Where("post_slug = ?", slug).Count(&count)
 	return count > 0
+}
+
+func (postRepo postRepositoryImp) GetAllPost() ([]models.Post, error) {
+	var posts []models.Post
+	if err := postRepo.db.Order("id desc").Preload("User").Find(&posts).Error; err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
+func (postRepo postRepositoryImp) GetPostBySlug(postSlug string) (*models.Post, error) {
+	var post models.Post
+	if err := postRepo.db.Where("post_slug = ?", postSlug).Preload("User").First(&post).Error; err != nil {
+		return nil, err
+	}
+	post.ViewCount += 1
+	if err := postRepo.db.Model(&post).UpdateColumn("view_count", post.ViewCount).Error; err != nil {
+		return nil, err
+	}
+
+	return &post, nil
 }
